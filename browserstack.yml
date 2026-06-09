@@ -1,0 +1,36 @@
+# ── BrowserStack SDK Configuration ──────────────────────────────────────────
+# SMART-QA Playwright Suite — BrowserStack Automate
+# Docs: https://www.browserstack.com/docs/automate/playwright
+
+userName: ${BROWSERSTACK_USERNAME}
+accessKey: ${BROWSERSTACK_ACCESS_KEY}
+
+buildName: SMART-QA Smoke Run
+projectName: SMART-QA POC
+buildTag:
+  - smoke
+  - playwright
+  - automated
+
+# ── Browsers & OS ────────────────────────────────────────────────────────────
+browsers:
+  - browser: chrome
+    browser_version: latest
+    os: Windows
+    os_version: 11
+
+  - browser: firefox
+    browser_version: latest
+    os: OS X
+    os_version: Ventura
+
+# ── Parallelism ───────────────────────────────────────────────────────────────
+parallelsPerPlatform: 2
+
+# ── Test Settings ─────────────────────────────────────────────────────────────
+testTimeout: 30000
+disableAutoCaptureLogs: true
+networkLogs: true
+consoleLogs: info
+visual: true
+video: true

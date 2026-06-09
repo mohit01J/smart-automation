@@ -1,0 +1,19 @@
+{
+  "name": "smart-qa-playwright-suite",
+  "version": "1.0.0",
+  "description": "SMART-QA Playwright TypeScript test suite — BrowserStack compatible",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:smoke": "npx playwright test --grep @smoke",
+    "test:regression": "npx playwright test --grep @regression",
+    "test:bs": "node ./run-browserstack.js test",
+    "test:bs:smoke": "node ./run-browserstack.js test --grep @smoke",
+    "report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "browserstack-node-sdk": "^1.35.0"
+  }
+}

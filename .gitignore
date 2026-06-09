@@ -1,0 +1,16 @@
+node_modules/
+
+playwright-report/
+test-results/
+
+log/
+*.log
+
+playwright-browserstack-sdk.config.ts
+
+.env
+.env.*
+!.env.example
+
+.DS_Store
+Thumbs.db
