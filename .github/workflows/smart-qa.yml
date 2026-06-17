@@ -35,9 +35,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Octokit for run summary upload
-        run: npm install @octokit/rest --save-dev
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox
 
@@ -65,4 +62,36 @@ jobs:
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
           JOB_STATUS: ${{ job.status }}
-        run: node .github/scripts/save-run-summary.js
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          RUN_NUMBER=${{ github.run_number }}
+          RUN_ID=${{ github.run_id }}
+          ACTOR=${{ github.actor }}
+          TRIGGER=${{ github.event_name }}
+          REPO=${{ github.repository }}
+
+          CONTENT="run_id: ${DATE}-smoke-gh-${RUN_NUMBER}
+          suite: smoke
+          trigger: ${TRIGGER}
+          triggered_by: ${ACTOR}
+          github_run_id: ${RUN_ID}
+          github_run_url: https://github.com/${REPO}/actions/runs/${RUN_ID}
+          status: ${JOB_STATUS}
+          date: ${DATE}
+          human_approval: pending"
+
+          ENCODED=$(echo "$CONTENT" | base64 -w 0)
+          FILE_PATH="evidence/run-summaries/${DATE}-smoke-gh-${RUN_NUMBER}.yaml"
+
+          curl -s -X PUT \
+            -H "Authorization: Bearer ${GH_PAT}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/mohit01J/prada-marketplace-quality-assurance/contents/${FILE_PATH} \
+            -d "{
+              \"message\": \"chore: run summary ${DATE} smoke gh-${RUN_NUMBER}\",
+              \"content\": \"${ENCODED}\",
+              \"branch\": \"main\"
+            }"
+
+          echo "Run summary saved: ${FILE_PATH}"
