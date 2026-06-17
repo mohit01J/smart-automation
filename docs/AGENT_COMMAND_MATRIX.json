@@ -3,7 +3,7 @@
   "project": "smart-qa-playwright-suite",
   "repository": "mohit01J/smart-automation",
   "target_site": "https://the-internet.herokuapp.com",
-  "evidence_output_repo": "ggai-marketplace-quality-assurance",
+  "evidence_output_repo": "prada-marketplace-quality-assurance",
   "evidence_output_path": "evidence/run-summaries/",
   "runner": {
     "local": "npx playwright test",
