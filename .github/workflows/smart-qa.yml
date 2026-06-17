@@ -1,0 +1,95 @@
+name: SMART-QA Automated Test Run
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  smart-qa-smoke:
+    name: Smoke Tests on BrowserStack
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Verify Playwright installation
+        run: npx playwright --version
+
+      - name: Run smoke tests on BrowserStack
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: npm run test:bs:smoke
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-qa-results-${{ github.run_number }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 30
+
+      - name: Upload run summary to QA foundation repo
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            const runNumber = context.runNumber;
+            const status = '${{ job.status }}';
+            const runId = context.runId;
+            const actor = context.actor;
+            const trigger = context.eventName;
+
+            const content = `run_id: ${date}-smoke-gh-${runNumber}
+suite: smoke
+trigger: ${trigger}
+triggered_by: ${actor}
+github_run_id: ${runId}
+github_run_url: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${runId}
+status: ${status.toUpperCase()}
+date: ${date}
+human_approval: pending
+`;
+
+            const encoded = Buffer.from(content).toString('base64');
+
+            await github.rest.repos.createOrUpdateFileContents({
+              owner: 'mohit01J',
+              repo: 'prada-marketplace-quality-assurance',
+              path: `evidence/run-summaries/${date}-smoke-gh-${runNumber}.yaml`,
+              message: `chore: run summary ${date} smoke gh-${runNumber}`,
+              content: encoded,
+              branch: 'main'
+            });
+
+            console.log(`Run summary saved: evidence/run-summaries/${date}-smoke-gh-${runNumber}.yaml`);
