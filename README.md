@@ -113,3 +113,4 @@ BROWSERSTACK=true npx playwright test --grep @smoke
 Report: total passed, total failed, and any error messages.
 ```
 <!-- SMART-QA GitHub Actions enabled - automated smoke tests active -->
+<!-- retry after YAML fix -->
