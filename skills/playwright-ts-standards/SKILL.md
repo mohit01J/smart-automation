@@ -1,6 +1,6 @@
----
-name: Playwright TypeScript Standards
+name: playwright-ts-standards
 description: Prada Digital test framework conventions for Playwright + TypeScript
+
 ---
 
 # Playwright TypeScript Standards
