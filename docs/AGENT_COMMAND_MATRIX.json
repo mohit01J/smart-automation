@@ -1,101 +1,207 @@
 {
-  "version": 1,
+  "version": "2.0.0",
   "project": "smart-qa-playwright-suite",
+  "repository": "mohit01J/smart-automation",
+  "target_site": "https://the-internet.herokuapp.com",
+  "evidence_output_repo": "ggai-marketplace-quality-assurance",
+  "evidence_output_path": "evidence/run-summaries/",
   "runner": {
     "local": "npx playwright test",
     "browserstack": "node ./run-browserstack.js test"
   },
   "preconditions": {
-    "workingDirectory": "repository-root",
-    "browserstackEnv": ["BROWSERSTACK_USERNAME", "BROWSERSTACK_ACCESS_KEY"]
+    "browserstack": [
+      "BROWSERSTACK_USERNAME must be set",
+      "BROWSERSTACK_ACCESS_KEY must be set"
+    ],
+    "local": ["npm install must be run first", "Run from repository root"]
   },
-  "intents": {
-    "run_all_tests": {
-      "command": "npm test"
+  "intents": [
+    {
+      "id": "run_all_tests",
+      "natural_language": [
+        "run all tests",
+        "execute full suite",
+        "run everything",
+        "full regression"
+      ],
+      "local_command": "npm test",
+      "browserstack_command": "npm run test:bs",
+      "test_count": 16,
+      "files": [
+        "tests/login.spec.ts",
+        "tests/ui-components.spec.ts",
+        "tests/dynamic.spec.ts"
+      ]
     },
-    "run_smoke_tests": {
-      "command": "npm run test:smoke"
+    {
+      "id": "run_smoke_tests",
+      "natural_language": [
+        "run smoke tests",
+        "execute smoke suite",
+        "smoke only",
+        "run @smoke",
+        "quick smoke check"
+      ],
+      "local_command": "npm run test:smoke",
+      "browserstack_command": "npm run test:bs:smoke",
+      "test_count": 9,
+      "tests_included": [
+        "Alerts › @smoke JS alert can be accepted",
+        "Dynamic Loading › @smoke element hidden initially reveals after start",
+        "Inputs › @smoke number input accepts numeric value",
+        "Login › @smoke valid login succeeds",
+        "Login › @smoke invalid password shows error",
+        "Checkboxes › @smoke checkbox 1 can be checked",
+        "Checkboxes › @smoke checkbox 2 starts checked",
+        "Dropdown › @smoke can select option 1",
+        "Dropdown › @smoke can select option 2"
+      ]
     },
-    "run_regression_tests": {
-      "command": "npm run test:regression"
+    {
+      "id": "run_regression_tests",
+      "natural_language": [
+        "run regression tests",
+        "execute regression suite",
+        "regression only",
+        "run @regression",
+        "full regression check"
+      ],
+      "local_command": "npm run test:regression",
+      "browserstack_command": "node ./run-browserstack.js test --grep @regression",
+      "test_count": 7,
+      "tests_included": [
+        "Alerts › @regression JS confirm can be accepted",
+        "Alerts › @regression JS confirm can be dismissed",
+        "Dynamic Loading › @regression element rendered after start is visible",
+        "Login › @regression invalid username shows error",
+        "Login › @regression login then logout returns to login page",
+        "Checkboxes › @regression checkbox 2 can be unchecked",
+        "Dropdown › @regression selecting different options updates value"
+      ]
     },
-    "run_on_browserstack": {
-      "command": "npm run test:bs"
+    {
+      "id": "run_login_tests",
+      "natural_language": [
+        "run login tests",
+        "execute login suite",
+        "test login",
+        "run only login",
+        "login spec only",
+        "login tests on browserstack"
+      ],
+      "local_command": "npx playwright test tests/login.spec.ts",
+      "browserstack_command": "node ./run-browserstack.js test tests/login.spec.ts",
+      "test_count": 4,
+      "tests_included": [
+        "Login › @smoke valid login succeeds",
+        "Login › @smoke invalid password shows error",
+        "Login › @regression invalid username shows error",
+        "Login › @regression login then logout returns to login page"
+      ]
     },
-    "run_smoke_on_browserstack": {
-      "command": "npm run test:bs:smoke"
+    {
+      "id": "run_ui_tests",
+      "natural_language": [
+        "run ui tests",
+        "execute ui components",
+        "test checkboxes and dropdowns",
+        "ui components suite",
+        "run ui-components"
+      ],
+      "local_command": "npx playwright test tests/ui-components.spec.ts",
+      "browserstack_command": "node ./run-browserstack.js test tests/ui-components.spec.ts",
+      "test_count": 6,
+      "tests_included": [
+        "Checkboxes › @smoke checkbox 1 can be checked",
+        "Checkboxes › @smoke checkbox 2 starts checked",
+        "Checkboxes › @regression checkbox 2 can be unchecked",
+        "Dropdown › @smoke can select option 1",
+        "Dropdown › @smoke can select option 2",
+        "Dropdown › @regression selecting different options updates value"
+      ]
     },
-    "run_chrome_only": {
-      "command": "npx playwright test --project=chromium"
+    {
+      "id": "run_dynamic_tests",
+      "natural_language": [
+        "run dynamic tests",
+        "execute dynamic suite",
+        "test alerts",
+        "test dynamic loading",
+        "alerts and inputs suite"
+      ],
+      "local_command": "npx playwright test tests/dynamic.spec.ts",
+      "browserstack_command": "node ./run-browserstack.js test tests/dynamic.spec.ts",
+      "test_count": 6,
+      "tests_included": [
+        "Alerts › @smoke JS alert can be accepted",
+        "Alerts › @regression JS confirm can be accepted",
+        "Alerts › @regression JS confirm can be dismissed",
+        "Dynamic Loading › @smoke element hidden initially reveals after start",
+        "Dynamic Loading › @regression element rendered after start is visible",
+        "Inputs › @smoke number input accepts numeric value"
+      ]
     },
-    "run_firefox_only": {
-      "command": "npx playwright test --project=firefox"
+    {
+      "id": "run_login_smoke_only",
+      "natural_language": [
+        "run login smoke tests",
+        "smoke login only",
+        "quick login check"
+      ],
+      "local_command": "npx playwright test tests/login.spec.ts --grep @smoke",
+      "browserstack_command": "node ./run-browserstack.js test tests/login.spec.ts --grep @smoke",
+      "test_count": 2,
+      "tests_included": [
+        "Login › @smoke valid login succeeds",
+        "Login › @smoke invalid password shows error"
+      ]
     },
-    "run_headed": {
-      "command": "npx playwright test --headed"
+    {
+      "id": "run_chrome_only",
+      "natural_language": [
+        "run on chrome",
+        "chrome only",
+        "execute on chromium"
+      ],
+      "local_command": "npx playwright test --project=chromium",
+      "browserstack_command": "node ./run-browserstack.js test --project=chromium",
+      "test_count": 16
     },
-    "run_debug_mode": {
-      "command": "npx playwright test --debug"
-    },
-    "run_slowmo_debug": {
-      "command": "npx playwright test --headed --slow-mo 200"
-    },
-    "run_specific_file_login": {
-      "command": "npx playwright test tests/login.spec.ts"
-    },
-    "run_specific_file_ui_components": {
-      "command": "npx playwright test tests/ui-components.spec.ts"
-    },
-    "run_specific_file_dynamic": {
-      "command": "npx playwright test tests/dynamic.spec.ts"
-    },
-    "run_specific_test_title": {
-      "template": "npx playwright test --grep \"<exact test title>\"",
-      "example": "npx playwright test --grep \"@smoke valid login succeeds\""
-    },
-    "run_by_smoke_tag": {
-      "command": "npx playwright test --grep @smoke"
-    },
-    "run_by_regression_tag": {
-      "command": "npx playwright test --grep @regression"
-    },
-    "list_all_tests": {
-      "command": "npx playwright test --list"
-    },
-    "list_matching_tests": {
-      "template": "npx playwright test --grep \"<pattern>\" --list"
-    },
-    "open_html_report": {
-      "command": "npm run report"
-    },
-    "open_html_report_direct": {
-      "command": "npx playwright show-report"
-    },
-    "run_checkout_tests": {
-      "command": "npx playwright test --grep \"checkout|cart|payment\"",
-      "expectedCurrentState": "zero_matches"
-    },
-    "run_italy_locale_tests": {
-      "command": "npx playwright test --grep \"@italy|italy|locale\"",
-      "expectedCurrentState": "zero_matches"
-    },
-    "run_prada_tests": {
-      "command": "npx playwright test --grep \"prada|checkout|cart|payment|locale\"",
-      "expectedCurrentState": "zero_matches"
+    {
+      "id": "run_firefox_only",
+      "natural_language": ["run on firefox", "firefox only"],
+      "local_command": "npx playwright test --project=firefox",
+      "browserstack_command": "node ./run-browserstack.js test --project=firefox",
+      "test_count": 16
     }
-  },
-  "scriptsFromPackageJson": {
-    "test": "npx playwright test",
-    "test:smoke": "npx playwright test --grep @smoke",
-    "test:regression": "npx playwright test --grep @regression",
-    "test:bs": "node ./run-browserstack.js test",
-    "test:bs:smoke": "node ./run-browserstack.js test --grep @smoke",
-    "report": "npx playwright show-report"
-  },
-  "knownCurrentStateConstraints": [
-    "No Prada.com tests currently implemented.",
-    "No checkout/cart/payment suite currently implemented.",
-    "No Italy-locale tags or datasets currently implemented.",
-    "Current target site is https://the-internet.herokuapp.com."
-  ]
+  ],
+  "future_intents": [
+    {
+      "id": "run_checkout_tests",
+      "natural_language": [
+        "run checkout tests",
+        "test checkout",
+        "checkout suite"
+      ],
+      "status": "NOT_IMPLEMENTED",
+      "note": "No Prada.com checkout tests exist yet. Planned for Phase 2."
+    },
+    {
+      "id": "run_italy_locale_tests",
+      "natural_language": ["run italy tests", "italy locale", "test italy"],
+      "status": "NOT_IMPLEMENTED",
+      "note": "No Italy locale tests exist yet. Planned for Phase 2."
+    },
+    {
+      "id": "run_prada_tests",
+      "natural_language": ["run prada tests", "test prada.com"],
+      "status": "NOT_IMPLEMENTED",
+      "note": "No Prada.com tests exist yet. Planned for Phase 2."
+    }
+  ],
+  "validation": {
+    "schema": "docs/AGENT_COMMAND_MATRIX.schema.json",
+    "validate_command": "npx ajv-cli validate -s docs/AGENT_COMMAND_MATRIX.schema.json -d docs/AGENT_COMMAND_MATRIX.json --spec=draft2020"
+  }
 }
