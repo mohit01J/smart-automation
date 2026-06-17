@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://companyhelm.local/schemas/agent-command-matrix.schema.json",
+  "title": "Agent Command Matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "project",
+    "runner",
+    "preconditions",
+    "intents",
+    "scriptsFromPackageJson",
+    "knownCurrentStateConstraints"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["local", "browserstack"],
+      "properties": {
+        "local": {
+          "type": "string",
+          "minLength": 1
+        },
+        "browserstack": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "preconditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workingDirectory", "browserstackEnv"],
+      "properties": {
+        "workingDirectory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "browserstackEnv": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contains": { "const": "BROWSERSTACK_USERNAME" },
+          "allOf": [
+            {
+              "contains": { "const": "BROWSERSTACK_ACCESS_KEY" }
+            }
+          ]
+        }
+      }
+    },
+    "intents": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "template": {
+            "type": "string",
+            "minLength": 1
+          },
+          "example": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expectedCurrentState": {
+            "type": "string",
+            "enum": ["zero_matches", "matches_exist", "dynamic"]
+          }
+        },
+        "anyOf": [{ "required": ["command"] }, { "required": ["template"] }]
+      }
+    },
+    "scriptsFromPackageJson": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "knownCurrentStateConstraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
